@@ -2,14 +2,6 @@
 #include "./ui_mainwindow.h"
 
 
-int race( int numIterat )
-{
-    int32_t num =0;
-    for(uint32_t i = 0; i < numIterat; i++){
-        num++;
-    }
-    return num;
-}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -90,12 +82,10 @@ void MainWindow::StartRace(void){
     if(ui->rb_qtConcur->isChecked()){
 
  //       ui->te_debug->append("Выполни ДЗ!");
-        //Тут должен быть код ДЗ
-        QFuture<int> future1 = QtConcurrent::run(race, ui->sb_initNum->value());
-        QFuture<int> future2 = QtConcurrent::run(race,  ui->sb_initNum->value());
 
-        ui->te_debug->append("Искомое число равно: " + QString::number(future1.result()+future2.result()) + ", а должно быть " +
-                              QString::number(ui->sb_initNum->value()*2));
+        QFuture<void> future = QtConcurrent::run([&](){concurRace1->DoWork(&number, 0, ui->sb_initNum->value());});
+        future.then([&](){concurRace2->DoWork(&number, 0, ui->sb_initNum->value());});
+
         ui->pb_start->setEnabled(true);
     }
     else{
